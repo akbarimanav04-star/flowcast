@@ -1,0 +1,14 @@
+{
+  "champions": {
+    "volume": "Random Forest",
+    "travel_time": "XGBoost",
+    "congestion": "XGBoost + tuned class weights",
+    "accident": "XGBoost"
+  },
+  "class_weights": [
+    0.6,
+    0.6,
+    0.8,
+    1.0
+  ]
+}

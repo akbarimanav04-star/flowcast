@@ -1,0 +1,59 @@
+# FlowCast configuration - every path / constant lives here (no magic numbers in code)
+seed: 42
+
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  models: models
+  reports: reports
+  figures: reports/figures
+
+files:
+  traffic: traffic_sensor_log.csv
+  weather: weather_observations.csv
+  calendar: calendar_events.csv
+
+# 30-minute windows
+windows_per_day: 48
+
+validation:
+  max_speed_kmh: 200        # speeds above this are physically impossible
+  max_occupancy_pct: 100
+  min_volume: 0
+
+cleaning:
+  short_gap_windows: 4       # <= 4 windows (2 h): time interpolation; longer: road+weekday+slot median
+  iqr_k: 3.0                 # IQR fence multiplier for statistical outliers (per road x hour)
+
+congestion_bands:            # volume / (capacity/2)
+  moderate: 0.50
+  heavy: 0.80
+  severe: 1.00
+
+features:
+  peak_hours: [7, 8, 9, 16, 17, 18, 19]
+  lags: [1, 2, 48]
+  rolling_windows: [4, 8]
+  low_visibility_m: 1000
+  rain_mm: 0.1
+  horizons: [1, 2, 3, 4]     # 30..120 min ahead
+
+split:                       # chronological, never random
+  train_end: "2025-03-31"
+  val_end: "2025-04-30"      # test = everything after
+
+ml:
+  cv_splits: 3
+  svm_train_rows: 15000      # SVM is O(n^2): trained on a subsample
+  n_jobs: 1
+
+dl:
+  seq_len: 12                # previous 12 windows = 6 hours
+  hidden_size: 64
+  num_layers: 1
+  dropout: 0.2
+  lr: 0.002
+  batch_size: 512
+  max_epochs: 25
+  patience: 4
